@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembelajaran Kombinasi Warna</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .color-picker {
+            margin: 10px 0;
+        }
+
+        input[type="color"] {
+            width: 100px;
+            height: 50px;
+            border: none;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 20px;
+        }
+
+        #combinedColor {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kombinasi Warna</h1>
+        <p>Pilih beberapa warna dan lihat hasilnya!!!</p>
+
+        <!-- Daftar warna yang dipilih -->
+        <div id="colorPickerContainer">
+            <div class="color-picker">
+                <label for="color1">Warna 1:</label>
+                <input type="color" class="color-input" value="#ff0000">
+            </div>
+            <div class="color-picker">
+                <label for="color2">Warna 2:</label>
+                <input type="color" class="color-input" value="#0000ff">
+            </div>
+        </div>
+
+        <!-- Tombol untuk menambah warna -->
+        <button id="addColorBtn">Tambah Warna</button>
+
+        <!-- Tombol untuk menggabungkan warna -->
+        <button id="combineBtn">Gabungkan Warna</button>
+
+        <!-- Hasil warna kombinasi -->
+        <div class="result">
+            <h2>Hasil Penggabungan:</h2>
+            <div id="combinedColor"></div>
+        </div>
+    </div>
+
+    <script>
+        const colorPickerContainer = document.getElementById('colorPickerContainer');
+        const addColorBtn = document.getElementById('addColorBtn');
+        const combineBtn = document.getElementById('combineBtn');
+        const combinedColorDiv = document.getElementById('combinedColor');
+
+        // Fungsi untuk menambahkan color picker baru
+        addColorBtn.addEventListener('click', function() {
+            const colorPickers = document.querySelectorAll('.color-picker');
+            const newIndex = colorPickers.length + 1;
+
+            // Buat elemen HTML untuk color picker baru
+            const newColorPicker = document.createElement('div');
+            newColorPicker.classList.add('color-picker');
+            newColorPicker.innerHTML = `
+                <label for="color${newIndex}">Warna ${newIndex}:</label>
+                <input type="color" class="color-input" value="#000000">
+            `;
+            
+            // Tambahkan color picker ke dalam container
+            colorPickerContainer.appendChild(newColorPicker);
+        });
+
+        // Fungsi untuk menggabungkan beberapa warna
+        function combineMultipleColors(colors) {
+            let totalR = 0, totalG = 0, totalB = 0;
+
+            // Loop melalui setiap warna dan konversi ke RGB
+            colors.forEach(color => {
+                const rgb = hexToRgb(color);
+                totalR += rgb.r;
+                totalG += rgb.g;
+                totalB += rgb.b;
+            });
+
+            // Hitung rata-rata RGB
+            const combinedR = Math.floor(totalR / colors.length);
+            const combinedG = Math.floor(totalG / colors.length);
+            const combinedB = Math.floor(totalB / colors.length);
+
+            // Kembalikan hasil warna kombinasi dalam format hex
+            return rgbToHex(combinedR, combinedG, combinedB);
+        }
+
+        // Fungsi untuk mengubah warna Hex ke RGB
+        function hexToRgb(hex) {
+            const bigint = parseInt(hex.slice(1), 16);
+            const r = (bigint >> 16) & 255;
+            const g = (bigint >> 8) & 255;
+            const b = bigint & 255;
+            return { r, g, b };
+        }
+
+        // Fungsi untuk mengubah warna RGB ke Hex
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+        }
+
+        // Ketika tombol 'Gabungkan Warna' diklik
+        combineBtn.addEventListener('click', function() {
+            // Ambil semua warna dari input color
+            const colorInputs = document.querySelectorAll('.color-input');
+            const colors = Array.from(colorInputs).map(input => input.value);
+
+            // Gabungkan semua warna
+            const combinedColor = combineMultipleColors(colors);
+
+            // Tampilkan warna hasil kombinasi
+            combinedColorDiv.style.backgroundColor = combinedColor;
+        });
+    </script>
+</body>
+</html>
